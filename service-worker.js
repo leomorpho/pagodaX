@@ -77,6 +77,10 @@ self.addEventListener("activate", (event) => {
  *  void respondWith(Promise<Response> r)
  */
 self.addEventListener("fetch", (event) => {
+  // Bypass the service worker for non-GET requests.
+  if (event.request.method !== "GET") {
+    return;
+  }
   if (HOSTNAME_WHITELIST.includes(new URL(event.request.url).hostname)) {
     event.respondWith(
       (async () => {
