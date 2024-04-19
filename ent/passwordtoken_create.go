@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"time"
 
+	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/mikestefanello/pagoda/ent/passwordtoken"
@@ -19,6 +20,7 @@ type PasswordTokenCreate struct {
 	config
 	mutation *PasswordTokenMutation
 	hooks    []Hook
+	conflict []sql.ConflictOption
 }
 
 // SetHash sets the "hash" field.
@@ -135,6 +137,7 @@ func (ptc *PasswordTokenCreate) createSpec() (*PasswordToken, *sqlgraph.CreateSp
 		_node = &PasswordToken{config: ptc.config}
 		_spec = sqlgraph.NewCreateSpec(passwordtoken.Table, sqlgraph.NewFieldSpec(passwordtoken.FieldID, field.TypeInt))
 	)
+	_spec.OnConflict = ptc.conflict
 	if value, ok := ptc.mutation.Hash(); ok {
 		_spec.SetField(passwordtoken.FieldHash, field.TypeString, value)
 		_node.Hash = value
@@ -163,11 +166,186 @@ func (ptc *PasswordTokenCreate) createSpec() (*PasswordToken, *sqlgraph.CreateSp
 	return _node, _spec
 }
 
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.PasswordToken.Create().
+//		SetHash(v).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.PasswordTokenUpsert) {
+//			SetHash(v+v).
+//		}).
+//		Exec(ctx)
+func (ptc *PasswordTokenCreate) OnConflict(opts ...sql.ConflictOption) *PasswordTokenUpsertOne {
+	ptc.conflict = opts
+	return &PasswordTokenUpsertOne{
+		create: ptc,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.PasswordToken.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (ptc *PasswordTokenCreate) OnConflictColumns(columns ...string) *PasswordTokenUpsertOne {
+	ptc.conflict = append(ptc.conflict, sql.ConflictColumns(columns...))
+	return &PasswordTokenUpsertOne{
+		create: ptc,
+	}
+}
+
+type (
+	// PasswordTokenUpsertOne is the builder for "upsert"-ing
+	//  one PasswordToken node.
+	PasswordTokenUpsertOne struct {
+		create *PasswordTokenCreate
+	}
+
+	// PasswordTokenUpsert is the "OnConflict" setter.
+	PasswordTokenUpsert struct {
+		*sql.UpdateSet
+	}
+)
+
+// SetHash sets the "hash" field.
+func (u *PasswordTokenUpsert) SetHash(v string) *PasswordTokenUpsert {
+	u.Set(passwordtoken.FieldHash, v)
+	return u
+}
+
+// UpdateHash sets the "hash" field to the value that was provided on create.
+func (u *PasswordTokenUpsert) UpdateHash() *PasswordTokenUpsert {
+	u.SetExcluded(passwordtoken.FieldHash)
+	return u
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (u *PasswordTokenUpsert) SetCreatedAt(v time.Time) *PasswordTokenUpsert {
+	u.Set(passwordtoken.FieldCreatedAt, v)
+	return u
+}
+
+// UpdateCreatedAt sets the "created_at" field to the value that was provided on create.
+func (u *PasswordTokenUpsert) UpdateCreatedAt() *PasswordTokenUpsert {
+	u.SetExcluded(passwordtoken.FieldCreatedAt)
+	return u
+}
+
+// UpdateNewValues updates the mutable fields using the new values that were set on create.
+// Using this option is equivalent to using:
+//
+//	client.PasswordToken.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//		).
+//		Exec(ctx)
+func (u *PasswordTokenUpsertOne) UpdateNewValues() *PasswordTokenUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.PasswordToken.Create().
+//	    OnConflict(sql.ResolveWithIgnore()).
+//	    Exec(ctx)
+func (u *PasswordTokenUpsertOne) Ignore() *PasswordTokenUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *PasswordTokenUpsertOne) DoNothing() *PasswordTokenUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the PasswordTokenCreate.OnConflict
+// documentation for more info.
+func (u *PasswordTokenUpsertOne) Update(set func(*PasswordTokenUpsert)) *PasswordTokenUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&PasswordTokenUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetHash sets the "hash" field.
+func (u *PasswordTokenUpsertOne) SetHash(v string) *PasswordTokenUpsertOne {
+	return u.Update(func(s *PasswordTokenUpsert) {
+		s.SetHash(v)
+	})
+}
+
+// UpdateHash sets the "hash" field to the value that was provided on create.
+func (u *PasswordTokenUpsertOne) UpdateHash() *PasswordTokenUpsertOne {
+	return u.Update(func(s *PasswordTokenUpsert) {
+		s.UpdateHash()
+	})
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (u *PasswordTokenUpsertOne) SetCreatedAt(v time.Time) *PasswordTokenUpsertOne {
+	return u.Update(func(s *PasswordTokenUpsert) {
+		s.SetCreatedAt(v)
+	})
+}
+
+// UpdateCreatedAt sets the "created_at" field to the value that was provided on create.
+func (u *PasswordTokenUpsertOne) UpdateCreatedAt() *PasswordTokenUpsertOne {
+	return u.Update(func(s *PasswordTokenUpsert) {
+		s.UpdateCreatedAt()
+	})
+}
+
+// Exec executes the query.
+func (u *PasswordTokenUpsertOne) Exec(ctx context.Context) error {
+	if len(u.create.conflict) == 0 {
+		return errors.New("ent: missing options for PasswordTokenCreate.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *PasswordTokenUpsertOne) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// Exec executes the UPSERT query and returns the inserted/updated ID.
+func (u *PasswordTokenUpsertOne) ID(ctx context.Context) (id int, err error) {
+	node, err := u.create.Save(ctx)
+	if err != nil {
+		return id, err
+	}
+	return node.ID, nil
+}
+
+// IDX is like ID, but panics if an error occurs.
+func (u *PasswordTokenUpsertOne) IDX(ctx context.Context) int {
+	id, err := u.ID(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return id
+}
+
 // PasswordTokenCreateBulk is the builder for creating many PasswordToken entities in bulk.
 type PasswordTokenCreateBulk struct {
 	config
 	err      error
 	builders []*PasswordTokenCreate
+	conflict []sql.ConflictOption
 }
 
 // Save creates the PasswordToken entities in the database.
@@ -197,6 +375,7 @@ func (ptcb *PasswordTokenCreateBulk) Save(ctx context.Context) ([]*PasswordToken
 					_, err = mutators[i+1].Mutate(root, ptcb.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
+					spec.OnConflict = ptcb.conflict
 					// Invoke the actual operation on the latest mutation in the chain.
 					if err = sqlgraph.BatchCreate(ctx, ptcb.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
@@ -247,6 +426,138 @@ func (ptcb *PasswordTokenCreateBulk) Exec(ctx context.Context) error {
 // ExecX is like Exec, but panics if an error occurs.
 func (ptcb *PasswordTokenCreateBulk) ExecX(ctx context.Context) {
 	if err := ptcb.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.PasswordToken.CreateBulk(builders...).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.PasswordTokenUpsert) {
+//			SetHash(v+v).
+//		}).
+//		Exec(ctx)
+func (ptcb *PasswordTokenCreateBulk) OnConflict(opts ...sql.ConflictOption) *PasswordTokenUpsertBulk {
+	ptcb.conflict = opts
+	return &PasswordTokenUpsertBulk{
+		create: ptcb,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.PasswordToken.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (ptcb *PasswordTokenCreateBulk) OnConflictColumns(columns ...string) *PasswordTokenUpsertBulk {
+	ptcb.conflict = append(ptcb.conflict, sql.ConflictColumns(columns...))
+	return &PasswordTokenUpsertBulk{
+		create: ptcb,
+	}
+}
+
+// PasswordTokenUpsertBulk is the builder for "upsert"-ing
+// a bulk of PasswordToken nodes.
+type PasswordTokenUpsertBulk struct {
+	create *PasswordTokenCreateBulk
+}
+
+// UpdateNewValues updates the mutable fields using the new values that
+// were set on create. Using this option is equivalent to using:
+//
+//	client.PasswordToken.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//		).
+//		Exec(ctx)
+func (u *PasswordTokenUpsertBulk) UpdateNewValues() *PasswordTokenUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.PasswordToken.Create().
+//		OnConflict(sql.ResolveWithIgnore()).
+//		Exec(ctx)
+func (u *PasswordTokenUpsertBulk) Ignore() *PasswordTokenUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *PasswordTokenUpsertBulk) DoNothing() *PasswordTokenUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the PasswordTokenCreateBulk.OnConflict
+// documentation for more info.
+func (u *PasswordTokenUpsertBulk) Update(set func(*PasswordTokenUpsert)) *PasswordTokenUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&PasswordTokenUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetHash sets the "hash" field.
+func (u *PasswordTokenUpsertBulk) SetHash(v string) *PasswordTokenUpsertBulk {
+	return u.Update(func(s *PasswordTokenUpsert) {
+		s.SetHash(v)
+	})
+}
+
+// UpdateHash sets the "hash" field to the value that was provided on create.
+func (u *PasswordTokenUpsertBulk) UpdateHash() *PasswordTokenUpsertBulk {
+	return u.Update(func(s *PasswordTokenUpsert) {
+		s.UpdateHash()
+	})
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (u *PasswordTokenUpsertBulk) SetCreatedAt(v time.Time) *PasswordTokenUpsertBulk {
+	return u.Update(func(s *PasswordTokenUpsert) {
+		s.SetCreatedAt(v)
+	})
+}
+
+// UpdateCreatedAt sets the "created_at" field to the value that was provided on create.
+func (u *PasswordTokenUpsertBulk) UpdateCreatedAt() *PasswordTokenUpsertBulk {
+	return u.Update(func(s *PasswordTokenUpsert) {
+		s.UpdateCreatedAt()
+	})
+}
+
+// Exec executes the query.
+func (u *PasswordTokenUpsertBulk) Exec(ctx context.Context) error {
+	if u.create.err != nil {
+		return u.create.err
+	}
+	for i, b := range u.create.builders {
+		if len(b.conflict) != 0 {
+			return fmt.Errorf("ent: OnConflict was set for builder %d. Set it on the PasswordTokenCreateBulk instead", i)
+		}
+	}
+	if len(u.create.conflict) == 0 {
+		return errors.New("ent: missing options for PasswordTokenCreateBulk.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *PasswordTokenUpsertBulk) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

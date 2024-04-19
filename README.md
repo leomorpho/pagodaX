@@ -109,7 +109,7 @@
 - [Logging](#logging)
   - [Request ID](#request-id)
 - [PWA](#pwa)
-- [Roadmap](#roadmap)
+- [Javascript and Svelte Build System](#javascript-and-svelte-build-system)
 - [Credits](#credits)
 
 ## Introduction
@@ -130,14 +130,17 @@ While many great projects were used to build this, all of which are listed in th
 
 - [Echo](https://echo.labstack.com/): High performance, extensible, minimalist Go web framework.
 - [Ent](https://entgo.io/): Simple, yet powerful ORM for modeling and querying data.
+- [Templ](https://templ.guide/): A fantastic language for writing HTML user interfaces in Go.
 
 #### Frontend
 
 Go server-side rendered HTML combined with the projects below enable you to create slick, modern UIs without writing any JavaScript or CSS.
 
 - [HTMX](https://htmx.org/): Access AJAX, CSS Transitions, WebSockets and Server Sent Events directly in HTML, using attributes, so you can build modern user interfaces with the simplicity and power of hypertext.
-- [Alpine.js](https://alpinejs.dev/): Rugged, minimal tool for composing behavior directly in your markup. Think of it like jQuery for the modern web. Plop in a script tag and get going.
-- [Bulma](https://bulma.io/): Provides ready-to-use frontend components that you can easily combine to build responsive web interfaces. No JavaScript dependencies.
+- [Alpine.js](https://alpinejs.dev/): Rugged, minimal tool for composing behavior directly in your markup. Think of it like jQuery for the modern web. Plop in a script tag and get going. It's perfect for small and contained usecases.
+- [Tailwind](https://tailwindcss.com/): Ready-to-use frontend components and styling that you can easily combine to build responsive web interface.
+- Vanilla Javascript: A full vanilla JS build system that will run on HTMX swaps and allow you to create reusable bits of logic that can be housed independently of Templ templates.
+- [Svelte](https://svelte.dev/): Create islands of high interactivity with a JS framework. Note that Svelte could be swapped for just about any JS framework you like.
 
 #### Storage
 
@@ -173,9 +176,14 @@ Ensure the following are installed on your system:
 After checking out the repository, from within the root, start the Docker containers for the database and cache by executing `make up`:
 
 ```
-git clone git@github.com:mikestefanello/pagoda.git
-cd pagoda
+git clone git@github.com:leomorpho/pagodaX.git
+cd pagodaX
+
+# Start Redis and Postgres
 make up
+
+# Start go build + js build + css build
+make watch
 ```
 
 Since this repository is a _template_ and not a Go _library_, you **do not** use `go get`.
@@ -849,61 +857,23 @@ func (c *home) Get(ctx echo.Context) error {
 
 ## Template renderer
 
-The _template renderer_ is a _Service_ on the `Container` that aims to make template parsing and rendering easy and flexible. It is the mechanism that allows the `Page` to do [automatic template parsing](#automatic-template-parsing). The standard `html/template` is still the engine used behind the scenes. The code can be found in `pkg/services/template_renderer.go`.
+The _template renderer_ is a _Service_ on the `Container` that aims to make template parsing and rendering easy and flexible. It is the mechanism that allows the `Page` to do [automatic template parsing](#automatic-template-parsing). The [Templ](https://templ.guide/) library is used to render HTML and provides:
 
-Here is an example of a complex rendering that uses multiple template files as well as an entire directory of template files:
+- Server-side rendering (SSR)
+- Static rendering
+- Compiled code
+- Great developer experience (ships with IDE completion)
 
-```go
-buf, err = c.TemplateRenderer.
-    Parse().
-    Group("page").
-    Key("home").
-    Base("main").
-    Files("layouts/main", "pages/home").
-    Directories("components").
-    Execute(data)
-```
+A huge plus of Templ over the standard `html/template` package is that your templates are represented as _templ components_ that are fully typed, saving you from having to pass dictionnaries to `html/template` templates, providing a seamless development experience.
 
-This will do the following:
-- [Cache](#caching) the parsed template with a _group_ of `page` and _key_ of `home` so this parse only happens once
-- Set the _base template file_ as `main`
-- Include the templates `templates/layout/main.gohtml` and `templates/pages/home.gohtml`
-- Include all templates located within the directory `templates/components`
-- Include the [funcmap](#funcmap)
-- Execute the parsed template with `data` being passed in to the templates
-
-Using the example from the [page rendering](#rendering-the-page), this is what the `Controller` will execute:
+Because Templ simply takes a `templ` component, a full page or an HTML fragment can be rendered in the same way:
 
 ```go
-buf, err = c.Container.TemplateRenderer.
-    Parse().
-    Group("page").
-    Key(page.Name).
-    Base(page.Layout).
-    Files(
-        fmt.Sprintf("layouts/%s", page.Layout),
-        fmt.Sprintf("pages/%s", page.Name),
-    ).
-    Directories("components").
-    Execute(page)
-```
-
-If you have a need to _separately_ parse and cache the templates then later execute, you can separate the operations:
-
-```go
-_, err := c.TemplateRenderer.
-    Parse().
-    Group("my-group").
-    Key("my-key").
-    Base("auth").
-    Files("layouts/auth", "pages/login").
-    Directories("components").
-    Store()
-```
-
-```go
-tpl, err := c.TemplateRenderer.Load("my-group", "my-key")
-buf, err := tpl.Execute(data)
+page := controller.NewPage(ctx)
+page.Layout = layouts.Main
+page.Name = templates.PageAbout
+page.Title = "About"
+page.Component = pages.About(&page)
 ```
 
 ### Custom functions
@@ -1233,13 +1203,22 @@ By default, Echo's [request ID middleware](https://echo.labstack.com/middleware/
 
 There is a minimal manifest and service worker added by PWABuilder Studio. 
 
-## Roadmap
+## Javascript and Svelte Build System
 
-Future work includes but is not limited to:
+A basic build system exists in `build.mjs`. Vanilla JS functionalities can be placed in `javascript/vanilla/main.js` and will be served by the echo server to the web app. Similarly, Svelte components can be added in `javascript/svelte/main.js` to the `SvelteComponentRegistry`, and can then be instantiated in a Templ templates like so:
 
-- Flexible pager templates
-- Expanded HTMX examples and integration
-- Admin section
+```go
+templ About(page *controller.Page) {
+	<div id="test-svelte-todo-list"></div>
+	@initSvelteIslandsOfInteractivity()
+}
+
+script initSvelteIslandsOfInteractivity() {
+	renderSvelteComponent('SvelteTodoComponent', 'test-svelte-todo-list');
+}
+```
+
+The above thus instantiates 1 instance of the `SvelteTodoComponent` component into the HTML element with the id `test-svelte-todo-list`.
 
 ## Credits
 
@@ -1247,7 +1226,6 @@ Thank you to all of the following amazing projects for making this possible.
 
 - [alpinejs](https://github.com/alpinejs/alpine)
 - [asynq](https://github.com/hibiken/asynq)
-- [bulma](https://github.com/jgthms/bulma)
 - [docker](https://www.docker.com/)
 - [echo](https://github.com/labstack/echo)
 - [echo-contrib](https://github.com/labstack/echo-contrib)
@@ -1263,6 +1241,8 @@ Thank you to all of the following amazing projects for making this possible.
 - [redis](https://redis.io/)
 - [sprig](https://github.com/Masterminds/sprig)
 - [sessions](https://github.com/gorilla/sessions)
+- [tailwind](https://tailwindcss.com)
+- [templ](https://templ.guide/)
 - [testify](https://github.com/stretchr/testify)
 - [validator](https://github.com/go-playground/validator)
 - [viper](https://github.com/spf13/viper)
