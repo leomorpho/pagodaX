@@ -1,21 +1,3 @@
-// Based off of https://github.com/pwa-builder/PWABuilder/blob/main/docs/sw.js
-
-/*
-      Welcome to our basic Service Worker! This Service Worker offers a basic offline experience
-      while also being easily customizeable. You can add in your own code to implement the capabilities
-      listed below, or change anything else you would like.
-
-
-      Need an introduction to Service Workers? Check our docs here: https://docs.pwabuilder.com/#/home/sw-intro
-      Want to learn more about how our Service Worker generation works? Check our docs here: https://docs.pwabuilder.com/#/studio/existing-app?id=add-a-service-worker
-
-      Did you know that Service Workers offer many more capabilities than just offline? 
-        - Background Sync: https://microsoft.github.io/win-student-devs/#/30DaysOfPWA/advanced-capabilities/06
-        - Periodic Background Sync: https://web.dev/periodic-background-sync/
-        - Push Notifications: https://microsoft.github.io/win-student-devs/#/30DaysOfPWA/advanced-capabilities/07?id=push-notifications-on-the-web
-        - Badges: https://microsoft.github.io/win-student-devs/#/30DaysOfPWA/advanced-capabilities/07?id=application-badges
-    */
-
 const CACHE_NAME = "pwa-cache-v1";
 
 const HOSTNAME_WHITELIST = [
@@ -47,6 +29,16 @@ const getFixedUrl = (req) => {
   return url.href;
 };
 
+self.addEventListener("install", (event) => {
+  self.skipWaiting();
+});
+
+self.addEventListener("message", (event) => {
+  if (event.data.action === "skipWaiting") {
+    self.skipWaiting();
+  }
+});
+
 /**
  *  @Lifecycle Activate
  *  New one activated when old isnt being used.
@@ -58,62 +50,89 @@ self.addEventListener("activate", (event) => {
   const cacheWhitelist = [CACHE_NAME];
 
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (!cacheWhitelist.includes(cacheName)) {
-            return caches.delete(cacheName);
-          }
-        })
-      );
+    caches
+      .keys()
+      .then((cacheNames) => {
+        return Promise.all(
+          cacheNames.map((cacheName) => {
+            if (!cacheWhitelist.includes(cacheName)) {
+              return caches.delete(cacheName);
+            }
+          })
+        );
+      })
+      .then(() => {
+        return self.clients.claim();
+      })
+  );
+});
+
+self.addEventListener("fetch", (event) => {
+  const url = new URL(event.request.url);
+
+  // Define URLs or patterns to exclude from cache
+  const shouldBypassCache =
+    url.pathname.startsWith("/notifications") ||
+    url.search.includes("no-cache") ||
+    url.search.includes("realtime") ||
+    // This is the path to accept invitations by token.
+    url.pathname.startsWith("/i") ||
+    // Bypass cache for navigations.
+    event.request.mode === "navigate";
+
+  // Bypass the service worker for non-GET requests.
+  if (event.request.method !== "GET" || shouldBypassCache) {
+    return;
+  }
+  event.respondWith(
+    fetch(event.request).catch(() => {
+      return caches.match(event.request);
     })
   );
 });
 
-/**
- *  @Functional Fetch
- *  All network requests are being intercepted here.
- *
- *  void respondWith(Promise<Response> r)
- */
-self.addEventListener("fetch", (event) => {
-  // Bypass the service worker for non-GET requests.
-  if (event.request.method !== "GET") {
-    return;
+self.addEventListener("push", (event) => {
+  try {
+    console.log("[Service Worker] Push Received.");
+
+    const data = event.data.json();
+    const title = data.title || "Chérie";
+    const options = {
+      body: data.body,
+      icon: "https://chatbond-static.s3.us-west-002.backblazeb2.com/cherie/pwa/manifest-icon-96.maskable.png",
+    };
+    event.waitUntil(self.registration.showNotification(title, options));
+  } catch (error) {
+    console.error("Error in push event:", error);
   }
-  if (HOSTNAME_WHITELIST.includes(new URL(event.request.url).hostname)) {
-    event.respondWith(
-      (async () => {
-        try {
-          // Try to fetch the request from the network
-          const networkResponse = await fetch(event.request);
+});
 
-          // Open the cache
-          const cache = await caches.open(CACHE_NAME);
+self.addEventListener("notificationclick", function (event) {
+  // Close the notification when clicked
+  event.notification.close();
 
-          // Check if the fetch was successful
-          if (networkResponse.ok) {
-            // IMPORTANT: Clone the response before using it
-            // This step ensures you have a copy of the response for caching
-            // while still being able to return the original response to the browser
-            cache.put(event.request, networkResponse.clone());
+  // Retrieve dynamic URL from the notification data
+  const notificationData = event.notification.data;
+  const targetUrl = notificationData
+    ? notificationData.url
+    : "/auth/notifications";
+
+  // This looks to see if the current is already open and focuses if it is
+  event.waitUntil(
+    clients
+      .matchAll({
+        type: "window",
+      })
+      .then(function (clientList) {
+        for (var i = 0; i < clientList.length; i++) {
+          var client = clientList[i];
+          if (client.url === targetUrl && "focus" in client) {
+            return client.focus();
           }
-
-          return networkResponse;
-        } catch (error) {
-          console.log(
-            "Network request failed, attempting to serve from cache",
-            error
-          );
-          // If the network request fails, attempt to serve the content from the cache
-          const cachedResponse = await caches.match(event.request);
-          if (cachedResponse) {
-            return cachedResponse;
-          }
-          // Optionally, return a default/fallback response here
-          // e.g., return caches.match('/offline.html');
         }
-      })()
-    );
-  }
+        if (clients.openWindow) {
+          return clients.openWindow(targetUrl);
+        }
+      })
+  );
 });
