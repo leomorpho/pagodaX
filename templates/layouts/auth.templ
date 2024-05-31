@@ -43,6 +43,7 @@ templ Auth(content templ.Component, page *controller.Page) {
 							hx-target="#main-content"
 							hx-select="#main-content"
 							hx-indicator="next #page-loading"
+							hx-indicator="next #page-loading"
 							hx-swap="outerHTML show:window:top"
 							hx-push-url="true"
 						>
@@ -63,7 +64,7 @@ templ Auth(content templ.Component, page *controller.Page) {
 				</div>
 				@components.Footer(page)
 			</div>
-			// @components.PageLoadingIndicator()
+			@components.PageLoadingIndicator()
 			@components.BeforeBodyEnd()
 		</body>
 	</html>

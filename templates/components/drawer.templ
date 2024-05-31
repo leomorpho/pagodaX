@@ -76,7 +76,8 @@ templ drawerPanel(page *controller.Page) {
 		}
 		hx-target="#main-content"
 		hx-select="#main-content"
-		hx-swap="outerHTML"
+		hx-indicator="next #page-loading"
+		hx-swap="outerHTML show:window:top"
 		hx-push-url="true"
 	>
 		@drawerTop(page)

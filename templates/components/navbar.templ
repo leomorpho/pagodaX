@@ -9,7 +9,8 @@ templ Navbar(page *controller.Page) {
 		class="bg-primary/80 text-primary-content backdrop-blur-md"
 		hx-target="#main-content"
 		hx-select="#main-content"
-		hx-swap="outerHTML"
+		hx-indicator="next #page-loading"
+		hx-swap="outerHTML show:window:top"
 		hx-push-url="true"
 	>
 		<div class="container mx-auto px-4 py-2 flex justify-between items-center">

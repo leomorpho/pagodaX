@@ -3957,6 +3957,10 @@ details.collapse summary::-webkit-details-marker {
   height: 100vh;
 }
 
+.h-auto {
+  height: auto;
+}
+
 .min-h-screen {
   min-height: 100vh;
 }
@@ -4007,6 +4011,10 @@ details.collapse summary::-webkit-details-marker {
 
 .w-full {
   width: 100%;
+}
+
+.w-1\/12 {
+  width: 8.333333%;
 }
 
 .max-w-2xl {
