@@ -3,16 +3,16 @@ version: "3"
 services:
   cache:
     image: "redis:alpine"
-    container_name: pagoda_cache
+    container_name: ${PROJECT_NAME}_cache
     ports:
-      - "127.0.0.1:6379:6379"
+      - "127.0.0.1:${HOST_CACHE_PORT}:6379"
 
   db:
     # PG 16 is currenly not supported https://github.com/ent/ent/issues/3750
     image: postgres:15-alpine
-    container_name: pagoda_db
+    container_name: ${PROJECT_NAME}_db
     ports:
-      - "127.0.0.1:5432:5432"
+      - "127.0.0.1:${HOST_DB_PORT}:5432"
     environment:
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=admin
@@ -20,13 +20,13 @@ services:
 
   mailpit:
     image: axllent/mailpit
-    container_name: mailpit
+    container_name: ${PROJECT_NAME}_mailpit
     restart: always
     volumes:
       - ./data:/data
     ports:
-      - 8025:8025
-      - 1025:1025
+      - "${HOST_MAILPIT_HTTP_PORT}:8025"
+      - "${HOST_MAILPIT_SMTP_PORT}:1025"
     environment:
       MP_MAX_MESSAGES: 5000
       MP_DATA_FILE: /data/mailpit.db

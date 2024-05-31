@@ -49,7 +49,7 @@ templ Register(page *controller.Page) {
 						type="password"
 						id="password"
 						name="password"
-						placeholder="*******"
+						placeholder="•••••••••"
 						class={ "bg-gray-50 border border-gray-300 text-gray-900 text-sm md:text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full md:ps-5 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500", form.Submission.GetFieldStatusClass("Password") }
 						value={ form.Password }
 					/>
@@ -64,7 +64,7 @@ templ Register(page *controller.Page) {
 						type="password"
 						id="password-confirm"
 						name="password-confirm"
-						placeholder="*******"
+						placeholder="•••••••••"
 						class={ "bg-gray-50 border border-gray-300 text-gray-900 text-sm md:text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full md:ps-5 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500", form.Submission.GetFieldStatusClass("ConfirmPassword") }
 					/>
 					@components.FormFieldErrors(form.Submission.GetFieldErrors("ConfirmPassword"))
