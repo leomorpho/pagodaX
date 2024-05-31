@@ -3,7 +3,6 @@ package layouts
 import (
 	"github.com/mikestefanello/pagoda/pkg/controller"
 	"github.com/mikestefanello/pagoda/templates/components"
-	// "github.com/mikestefanello/pagoda/templates/helpers"
 )
 
 templ Main(content templ.Component, page *controller.Page) {
@@ -23,11 +22,14 @@ templ Main(content templ.Component, page *controller.Page) {
 			<div class="hidden lg:block sticky top-0 z-10">
 				@components.Navbar(page)
 			</div>
-			<div class="flex ">
-				// TODO: the styling of the drawer is screwed up on large screens. Also, I'm not sure it's a good design decision anyways. To revisit.
-				// <!-- This is the desktop view drawer -->
-				// <div class="hidden lg:block lg:w-1/5">
-				// 	@components.Drawer(page)
+			<!-- Mobile PWA install button -->
+			// @components.PWAMobileInstallButton(page)
+			<div
+				class="flex"
+			>
+				// NOTE: to get below working, add "lg:ml-64" to the parent div
+				// <div class="hidden lg:block z-10 min-h-screen justify-center items-center">
+				// 	@components.Sidebar(page)
 				// </div>
 				<!-- Main content -->
 				<div
@@ -35,9 +37,9 @@ templ Main(content templ.Component, page *controller.Page) {
 					class="flex-grow mx-auto items-center justify-center 
 					base-100 text-base-content min-h-screen"
 				>
-					<div class="flex-grow px-5 mt-5 container mx-auto">
+					<div class="flex-grow mt-5 container mx-auto px-3 lg:px-36 xl:px-60">
 						if len(page.Title) > 0 {
-							<h1 class="text-2xl font-bold mb-4">{ page.Title }</h1>
+							<h1 class="text-5xl font-bold mb-4 pt-10 md:pt-0">{ page.Title }</h1>
 						}
 						@components.Messages(page)
 						@content
@@ -45,6 +47,7 @@ templ Main(content templ.Component, page *controller.Page) {
 					@components.Footer(page)
 				</div>
 			</div>
+			// @components.PageLoadingIndicator()
 			@components.BeforeBodyEnd()
 		</body>
 	</html>

@@ -154,7 +154,7 @@ func aboutTabs(tabs []types.AboutTab) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		for index, tab := range tabs {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"p-4 rounded-lg bg-gray-50 dark:bg-gray-800\" x-show=\"")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"p-4 rounded-lg bg-gray-100 dark:bg-gray-800\" x-show=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

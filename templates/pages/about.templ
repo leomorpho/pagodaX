@@ -53,7 +53,7 @@ templ aboutTabs(tabs []types.AboutTab) {
 		<div>
 			for index, tab := range tabs {
 				<div
-					class="p-4 rounded-lg bg-gray-50 dark:bg-gray-800"
+					class="p-4 rounded-lg bg-gray-100 dark:bg-gray-800"
 					x-show={ fmt.Sprintf("currentTab === %d", index) }
 				>
 					@helpers.UnsafeHTML(tab.Body)

@@ -28,19 +28,38 @@ templ contactForm(page *controller.Page) {
 				</div>
 			</div>
 		} else {
-			<form id="contact" method="post" class="max-w-md mx-auto mt-5" hx-post={ page.ToURL("contact.post") }>
+			<form id="contact" method="post" class="max-w-md mx-auto mt-5 mb-10" hx-post={ page.ToURL("contact.post") }>
 				<div class="mb-4">
-					<label for="email" class="block text-gray-700 text-sm font-bold mb-2">Email address</label>
-					<input id="email" name="email" type="email" class={ "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline " + form.Submission.GetFieldStatusClass("Email") } value={ form.Email }/>
+					<label
+						for="email"
+						class="flex flex-col space-y-2 m-5"
+					>Email address</label>
+					<input
+						id="email"
+						name="email"
+						type="email"
+						class={ "bg-gray-50 border border-gray-300 text-gray-900 text-sm md:text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full md:ps-5 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 " + form.Submission.GetFieldStatusClass("Email") }
+						value={ form.Email }
+					/>
 					@components.FormFieldErrors(form.Submission.GetFieldErrors("Email"))
 				</div>
 				<div class="mb-6">
-					<label for="message" class="block text-gray-700 text-sm font-bold mb-2">Message</label>
-					<textarea id="message" name="message" class={ "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline " + form.Submission.GetFieldStatusClass("Message") }>{ form.Message }</textarea>
+					<label
+						for="message"
+						class="flex flex-col space-y-2 m-5"
+					>Message</label>
+					<textarea
+						id="message"
+						name="message"
+						class={ "bg-gray-50 border border-gray-300 text-gray-900 text-sm md:text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full md:ps-5 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 " + form.Submission.GetFieldStatusClass("Message") }
+					>{ form.Message }</textarea>
 					@components.FormFieldErrors(form.Submission.GetFieldErrors("Message"))
 				</div>
 				<div class="flex items-center justify-between">
-					<button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+					<button
+						class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+						type="submit"
+					>
 						Submit
 					</button>
 				</div>

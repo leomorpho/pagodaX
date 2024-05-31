@@ -102,7 +102,7 @@ func homeTopContent(page *controller.Page) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</h2></div></div><div class=\"mt-6 mb-4\"><h1 class=\"text-2xl font-bold text-center\">Recent posts</h1><h2 class=\"text-lg text-gray-600 text-center mt-2\">Below is an example of both paging and AJAX fetching using HTMX</h2></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</h2></div></div><div class=\"mt-6 mb-4\"><h1 class=\"text-base-content text-2xl font-bold text-center\">Recent posts</h1><h2 class=\"text-base-content text-lg text-center mt-2\">Below is an example of both paging and AJAX fetching using HTMX</h2></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -126,13 +126,13 @@ func homePosts(page *controller.Page) templ.Component {
 			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div id=\"posts\" class=\"container mx-auto px-4\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div id=\"posts\" class=\"mx-auto px-4\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if data, ok := page.Data.([]types.Post); ok {
 			for _, post := range data {
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex border-b border-gray-200 py-4\"><div class=\"w-16 h-16 flex-none rounded-full overflow-hidden\"><img src=\"")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"bg-gray-100 dark:bg-gray-800 rounded-lg flex p-2 sm:p-4 my-4\"><div class=\"w-16 h-16 flex-none rounded-full overflow-hidden\"><img src=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
