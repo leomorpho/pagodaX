@@ -1,9 +1,8 @@
-# **NOTE: this is a fork of [mikestefanello/pagoda](https://github.com/mikestefanello/pagoda), a fantastic start kit for Go/HTMX. I have added a substantial amount of changes used as part of all of my projects. Sharing here as it could be useful to others...**
+## PagodaX: Rapid, easy full-stack web development starter kit in Go
+> [mikestefanello/pagoda](https://github.com/mikestefanello/pagoda) is the original project. However, as my fork evolved it gained a direction of its own, which may be inconsistent with the original intentions of Mike.
 
-## Pagoda: Rapid, easy full-stack web development starter kit in Go
-
-[![Go Report Card](https://goreportcard.com/badge/github.com/mikestefanello/pagoda)](https://goreportcard.com/report/github.com/mikestefanello/pagoda)
-[![Test](https://github.com/mikestefanello/pagoda/actions/workflows/test.yml/badge.svg)](https://github.com/mikestefanello/pagoda/actions/workflows/test.yml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/leomorpho/pagodaX)](https://goreportcard.com/report/github.com/leomorpho/pagodaX)
+[![Test](https://github.com/leomorpho/pagodaX/actions/workflows/test.yml/badge.svg)](https://github.com/leomorpho/pagodaX/actions/workflows/test.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Go Reference](https://pkg.go.dev/badge/github.com/mikestefanello/pagoda.svg)](https://pkg.go.dev/github.com/mikestefanello/pagoda)
 [![GoT](https://img.shields.io/badge/Made%20with-Go-1f425f.svg)](https://go.dev)
@@ -12,7 +11,6 @@
 <p align="center"><img alt="Logo" src="https://user-images.githubusercontent.com/552328/147838644-0efac538-a97e-4a46-86a0-41e3abdf9f20.png" height="200px"/></p>
 
 ## Table of Contents
-- [**NOTE: this is a fork of mikestefanello/pagoda, a fantastic start kit for Go/HTMX. I have added a substantial amount of changes used as part of all of my projects. Sharing here as it could be useful to others...**](#note-this-is-a-fork-of-mikestefanellopagoda-a-fantastic-start-kit-for-gohtmx-i-have-added-a-substantial-amount-of-changes-used-as-part-of-all-of-my-projects-sharing-here-as-it-could-be-useful-to-others)
   - [Pagoda: Rapid, easy full-stack web development starter kit in Go](#pagoda-rapid-easy-full-stack-web-development-starter-kit-in-go)
   - [Table of Contents](#table-of-contents)
   - [Introduction](#introduction)
