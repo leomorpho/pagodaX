@@ -3,9 +3,9 @@ package routes
 import (
 	"fmt"
 
-	"github.com/mikestefanello/pagoda/pkg/context"
 	"github.com/mikestefanello/pagoda/pkg/controller"
 	"github.com/mikestefanello/pagoda/pkg/msg"
+	"github.com/mikestefanello/pagoda/pkg/reqcontext"
 	"github.com/mikestefanello/pagoda/pkg/types"
 	"github.com/mikestefanello/pagoda/templates"
 	"github.com/mikestefanello/pagoda/templates/layouts"
@@ -29,7 +29,7 @@ func (c *contact) Get(ctx echo.Context) error {
 	page.Component = pages.Contact(&page)
 	page.HTMX.Request.Boosted = true
 
-	if form := ctx.Get(context.FormKey); form != nil {
+	if form := ctx.Get(reqcontext.FormKey); form != nil {
 		page.Form = form.(*types.ContactForm)
 	}
 	msg.Success(ctx, "Success!")
@@ -42,7 +42,7 @@ func (c *contact) Get(ctx echo.Context) error {
 
 func (c *contact) Post(ctx echo.Context) error {
 	var form types.ContactForm
-	ctx.Set(context.FormKey, &form)
+	ctx.Set(reqcontext.FormKey, &form)
 
 	// Parse the form values
 	if err := ctx.Bind(&form); err != nil {

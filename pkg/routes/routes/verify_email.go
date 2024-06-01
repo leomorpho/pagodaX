@@ -4,9 +4,9 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/mikestefanello/pagoda/ent"
 	"github.com/mikestefanello/pagoda/ent/user"
-	"github.com/mikestefanello/pagoda/pkg/context"
 	"github.com/mikestefanello/pagoda/pkg/controller"
 	"github.com/mikestefanello/pagoda/pkg/msg"
+	"github.com/mikestefanello/pagoda/pkg/reqcontext"
 	"github.com/mikestefanello/pagoda/pkg/routes/routenames"
 )
 
@@ -26,7 +26,7 @@ func (c *verifyEmail) Get(ctx echo.Context) error {
 	}
 
 	// Check if it matches the authenticated user
-	if u := ctx.Get(context.AuthenticatedUserKey); u != nil {
+	if u := ctx.Get(reqcontext.AuthenticatedUserKey); u != nil {
 		authUser := u.(*ent.User)
 
 		if authUser.Email == email {

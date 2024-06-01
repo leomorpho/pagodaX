@@ -7,9 +7,9 @@ import (
 
 	"github.com/a-h/templ"
 	"github.com/mikestefanello/pagoda/ent"
-	"github.com/mikestefanello/pagoda/pkg/context"
 	"github.com/mikestefanello/pagoda/pkg/htmx"
 	"github.com/mikestefanello/pagoda/pkg/msg"
+	"github.com/mikestefanello/pagoda/pkg/reqcontext"
 	"github.com/mikestefanello/pagoda/templates"
 
 	echomw "github.com/labstack/echo/v4/middleware"
@@ -146,7 +146,7 @@ func NewPage(ctx echo.Context) Page {
 		p.CSRF = csrf.(string)
 	}
 
-	if u := ctx.Get(context.AuthenticatedUserKey); u != nil {
+	if u := ctx.Get(reqcontext.AuthenticatedUserKey); u != nil {
 		p.IsAuth = true
 		p.AuthUser = u.(*ent.User)
 	}

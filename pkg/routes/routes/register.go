@@ -4,9 +4,9 @@ import (
 	"fmt"
 
 	"github.com/mikestefanello/pagoda/ent"
-	"github.com/mikestefanello/pagoda/pkg/context"
 	"github.com/mikestefanello/pagoda/pkg/controller"
 	"github.com/mikestefanello/pagoda/pkg/msg"
+	"github.com/mikestefanello/pagoda/pkg/reqcontext"
 	"github.com/mikestefanello/pagoda/pkg/routes/routenames"
 	"github.com/mikestefanello/pagoda/pkg/types"
 	"github.com/mikestefanello/pagoda/templates"
@@ -31,7 +31,7 @@ func (c *register) Get(ctx echo.Context) error {
 	page.Component = pages.Register(&page)
 	page.HTMX.Request.Boosted = true
 
-	if form := ctx.Get(context.FormKey); form != nil {
+	if form := ctx.Get(reqcontext.FormKey); form != nil {
 		page.Form = form.(*types.RegisterForm)
 	}
 
@@ -40,7 +40,7 @@ func (c *register) Get(ctx echo.Context) error {
 
 func (c *register) Post(ctx echo.Context) error {
 	var form types.RegisterForm
-	ctx.Set(context.FormKey, &form)
+	ctx.Set(reqcontext.FormKey, &form)
 
 	// Parse the form values
 	if err := ctx.Bind(&form); err != nil {

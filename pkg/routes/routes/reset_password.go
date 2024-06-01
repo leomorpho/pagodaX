@@ -2,9 +2,9 @@ package routes
 
 import (
 	"github.com/mikestefanello/pagoda/ent"
-	"github.com/mikestefanello/pagoda/pkg/context"
 	"github.com/mikestefanello/pagoda/pkg/controller"
 	"github.com/mikestefanello/pagoda/pkg/msg"
+	"github.com/mikestefanello/pagoda/pkg/reqcontext"
 	"github.com/mikestefanello/pagoda/pkg/routes/routenames"
 	"github.com/mikestefanello/pagoda/pkg/types"
 	"github.com/mikestefanello/pagoda/templates"
@@ -28,7 +28,7 @@ func (c *resetPassword) Get(ctx echo.Context) error {
 	page.Form = &types.ResetPasswordForm{}
 	page.Component = pages.ResetPassword(&page)
 
-	if form := ctx.Get(context.FormKey); form != nil {
+	if form := ctx.Get(reqcontext.FormKey); form != nil {
 		page.Form = form.(*types.ResetPasswordForm)
 	}
 
@@ -37,7 +37,7 @@ func (c *resetPassword) Get(ctx echo.Context) error {
 
 func (c *resetPassword) Post(ctx echo.Context) error {
 	var form types.ResetPasswordForm
-	ctx.Set(context.FormKey, &form)
+	ctx.Set(reqcontext.FormKey, &form)
 
 	// Parse the form values
 	if err := ctx.Bind(&form); err != nil {
@@ -59,7 +59,7 @@ func (c *resetPassword) Post(ctx echo.Context) error {
 	}
 
 	// Get the requesting user
-	usr := ctx.Get(context.UserKey).(*ent.User)
+	usr := ctx.Get(reqcontext.UserKey).(*ent.User)
 
 	// Update the user
 	_, err = usr.

@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/mikestefanello/pagoda/pkg/context"
+	"github.com/mikestefanello/pagoda/pkg/reqcontext"
 	"github.com/mikestefanello/pagoda/pkg/services"
 
 	"github.com/go-redis/redis/v8"
@@ -42,7 +42,7 @@ func ServeCachedPage(ch *services.CacheClient) echo.MiddlewareFunc {
 			}
 
 			// Skip if the user is authenticated
-			if c.Get(context.AuthenticatedUserKey) != nil {
+			if c.Get(reqcontext.AuthenticatedUserKey) != nil {
 				return next(c)
 			}
 
@@ -58,7 +58,7 @@ func ServeCachedPage(ch *services.CacheClient) echo.MiddlewareFunc {
 				switch {
 				case err == redis.Nil:
 					c.Logger().Info("no cached page found")
-				case context.IsCanceledError(err):
+				case reqcontext.IsCanceledError(err):
 					return nil
 				default:
 					c.Logger().Errorf("failed getting cached page: %v", err)

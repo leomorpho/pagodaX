@@ -7,7 +7,7 @@ import (
 
 	"github.com/mikestefanello/pagoda/ent"
 	"github.com/mikestefanello/pagoda/ent/user"
-	"github.com/mikestefanello/pagoda/pkg/context"
+	"github.com/mikestefanello/pagoda/pkg/reqcontext"
 
 	"github.com/labstack/echo/v4"
 )
@@ -28,7 +28,7 @@ func LoadUser(orm *ent.Client) echo.MiddlewareFunc {
 
 			switch err.(type) {
 			case nil:
-				c.Set(context.UserKey, u)
+				c.Set(reqcontext.UserKey, u)
 				return next(c)
 			case *ent.NotFoundError:
 				return echo.NewHTTPError(http.StatusNotFound)

@@ -6,8 +6,8 @@ import (
 	"strconv"
 
 	"github.com/mikestefanello/pagoda/ent"
-	"github.com/mikestefanello/pagoda/pkg/context"
 	"github.com/mikestefanello/pagoda/pkg/msg"
+	"github.com/mikestefanello/pagoda/pkg/reqcontext"
 	"github.com/mikestefanello/pagoda/pkg/services"
 
 	"github.com/labstack/echo/v4"
@@ -23,7 +23,7 @@ func LoadAuthenticatedUser(authClient *services.AuthClient) echo.MiddlewareFunc 
 				c.Logger().Warn("auth user not found")
 			case services.NotAuthenticatedError:
 			case nil:
-				c.Set(context.AuthenticatedUserKey, u)
+				c.Set(reqcontext.AuthenticatedUserKey, u)
 				c.Logger().Infof("auth user loaded in to context: %d", u.ID)
 			default:
 				return echo.NewHTTPError(
@@ -45,10 +45,10 @@ func LoadValidPasswordToken(authClient *services.AuthClient) echo.MiddlewareFunc
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			// Extract the user parameter
-			if c.Get(context.UserKey) == nil {
+			if c.Get(reqcontext.UserKey) == nil {
 				return echo.NewHTTPError(http.StatusInternalServerError)
 			}
-			usr := c.Get(context.UserKey).(*ent.User)
+			usr := c.Get(reqcontext.UserKey).(*ent.User)
 
 			// Extract the token ID
 			tokenID, err := strconv.Atoi(c.Param("password_token"))
@@ -66,7 +66,7 @@ func LoadValidPasswordToken(authClient *services.AuthClient) echo.MiddlewareFunc
 
 			switch err.(type) {
 			case nil:
-				c.Set(context.PasswordTokenKey, token)
+				c.Set(reqcontext.PasswordTokenKey, token)
 				return next(c)
 			case services.InvalidPasswordTokenError:
 				msg.Warning(c, "The link is either invalid or has expired. Please request a new one.")
@@ -86,7 +86,7 @@ func LoadValidPasswordToken(authClient *services.AuthClient) echo.MiddlewareFunc
 func RequireAuthentication() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
-			if u := c.Get(context.AuthenticatedUserKey); u == nil {
+			if u := c.Get(reqcontext.AuthenticatedUserKey); u == nil {
 				return echo.NewHTTPError(http.StatusUnauthorized)
 			}
 
@@ -99,7 +99,7 @@ func RequireAuthentication() echo.MiddlewareFunc {
 func RequireNoAuthentication() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
-			if u := c.Get(context.AuthenticatedUserKey); u != nil {
+			if u := c.Get(reqcontext.AuthenticatedUserKey); u != nil {
 				return echo.NewHTTPError(http.StatusForbidden)
 			}
 

@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/mikestefanello/pagoda/ent"
-	"github.com/mikestefanello/pagoda/pkg/context"
+	"github.com/mikestefanello/pagoda/pkg/reqcontext"
 	"github.com/mikestefanello/pagoda/pkg/tests"
 
 	"github.com/stretchr/testify/assert"
@@ -17,7 +17,7 @@ func TestLoadUser(t *testing.T) {
 	ctx.SetParamNames("user")
 	ctx.SetParamValues(fmt.Sprintf("%d", usr.ID))
 	_ = tests.ExecuteMiddleware(ctx, LoadUser(c.ORM))
-	ctxUsr, ok := ctx.Get(context.UserKey).(*ent.User)
+	ctxUsr, ok := ctx.Get(reqcontext.UserKey).(*ent.User)
 	require.True(t, ok)
 	assert.Equal(t, usr.ID, ctxUsr.ID)
 }

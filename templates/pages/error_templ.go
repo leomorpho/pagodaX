@@ -12,6 +12,7 @@ import "bytes"
 
 import (
 	"github.com/mikestefanello/pagoda/pkg/controller"
+	"github.com/mikestefanello/pagoda/pkg/routes/routenames"
 	"github.com/mikestefanello/pagoda/templates/helpers"
 )
 
@@ -46,20 +47,20 @@ func Error(page *controller.Page) templ.Component {
 			var templ_7745c5c3_Var2 string
 			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs("Click ")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/pages/error.templ`, Line: 13, Col: 21}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/pages/error.templ`, Line: 15, Col: 13}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = helpers.Link(page.ToURL("home"), "here", page.Path).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = helpers.Link(page.ToURL(routenames.RouteNameHome), "here", page.Path).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(" to return home")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/pages/error.templ`, Line: 15, Col: 27}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/pages/error.templ`, Line: 17, Col: 22}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {

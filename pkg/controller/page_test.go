@@ -4,9 +4,9 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/mikestefanello/pagoda/pkg/context"
 	"github.com/mikestefanello/pagoda/pkg/controller"
 	"github.com/mikestefanello/pagoda/pkg/msg"
+	"github.com/mikestefanello/pagoda/pkg/reqcontext"
 	"github.com/mikestefanello/pagoda/pkg/tests"
 
 	echomw "github.com/labstack/echo/v4/middleware"
@@ -33,7 +33,7 @@ func TestNewPage(t *testing.T) {
 	ctx, _ = tests.NewContext(c.Web, "/abc?def=123")
 	usr, err := tests.CreateUser(c.ORM)
 	require.NoError(t, err)
-	ctx.Set(context.AuthenticatedUserKey, usr)
+	ctx.Set(reqcontext.AuthenticatedUserKey, usr)
 	ctx.Set(echomw.DefaultCSRFConfig.ContextKey, "csrf")
 	p = controller.NewPage(ctx)
 	assert.Equal(t, "/abc", p.Path)

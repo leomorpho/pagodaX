@@ -3,8 +3,8 @@ package routes
 import (
 	"net/http"
 
-	"github.com/mikestefanello/pagoda/pkg/context"
 	"github.com/mikestefanello/pagoda/pkg/controller"
+	"github.com/mikestefanello/pagoda/pkg/reqcontext"
 	"github.com/mikestefanello/pagoda/templates"
 	"github.com/mikestefanello/pagoda/templates/layouts"
 	"github.com/mikestefanello/pagoda/templates/pages"
@@ -17,7 +17,7 @@ type errorHandler struct {
 }
 
 func (e *errorHandler) Get(err error, ctx echo.Context) {
-	if ctx.Response().Committed || context.IsCanceledError(err) {
+	if ctx.Response().Committed || reqcontext.IsCanceledError(err) {
 		return
 	}
 

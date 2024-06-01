@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/mikestefanello/pagoda/pkg/context"
 	"github.com/mikestefanello/pagoda/pkg/htmx"
 	"github.com/mikestefanello/pagoda/pkg/middleware"
+	"github.com/mikestefanello/pagoda/pkg/reqcontext"
 	"github.com/mikestefanello/pagoda/pkg/services"
 
 	"github.com/labstack/echo/v4"
@@ -139,7 +139,7 @@ func (c *Controller) cachePage(ctx echo.Context, page Page, html *bytes.Buffer) 
 	switch {
 	case err == nil:
 		ctx.Logger().Info("cached page")
-	case !context.IsCanceledError(err):
+	case !reqcontext.IsCanceledError(err):
 		ctx.Logger().Errorf("failed to cache page: %v", err)
 	}
 }

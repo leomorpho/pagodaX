@@ -6,9 +6,9 @@ import (
 
 	"github.com/mikestefanello/pagoda/ent"
 	"github.com/mikestefanello/pagoda/ent/user"
-	"github.com/mikestefanello/pagoda/pkg/context"
 	"github.com/mikestefanello/pagoda/pkg/controller"
 	"github.com/mikestefanello/pagoda/pkg/msg"
+	"github.com/mikestefanello/pagoda/pkg/reqcontext"
 	"github.com/mikestefanello/pagoda/pkg/routes/routenames"
 	"github.com/mikestefanello/pagoda/pkg/types"
 	"github.com/mikestefanello/pagoda/templates"
@@ -33,7 +33,7 @@ func (c *login) Get(ctx echo.Context) error {
 	page.Component = pages.Login(&page)
 	page.HTMX.Request.Boosted = true
 
-	if form := ctx.Get(context.FormKey); form != nil {
+	if form := ctx.Get(reqcontext.FormKey); form != nil {
 		page.Form = form.(*types.LoginForm)
 	}
 
@@ -42,7 +42,7 @@ func (c *login) Get(ctx echo.Context) error {
 
 func (c *login) Post(ctx echo.Context) error {
 	var form types.LoginForm
-	ctx.Set(context.FormKey, &form)
+	ctx.Set(reqcontext.FormKey, &form)
 
 	authFailed := func() error {
 		form.Submission.SetFieldError("Email", "")

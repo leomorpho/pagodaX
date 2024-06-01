@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/mikestefanello/pagoda/ent"
-	"github.com/mikestefanello/pagoda/pkg/context"
+	"github.com/mikestefanello/pagoda/pkg/reqcontext"
 	"github.com/mikestefanello/pagoda/pkg/tests"
 
 	"github.com/stretchr/testify/require"
@@ -21,7 +21,7 @@ func TestLoadAuthenticatedUser(t *testing.T) {
 
 	// Not authenticated
 	_ = tests.ExecuteMiddleware(ctx, mw)
-	assert.Nil(t, ctx.Get(context.AuthenticatedUserKey))
+	assert.Nil(t, ctx.Get(reqcontext.AuthenticatedUserKey))
 
 	// Login
 	err := c.Auth.Login(ctx, usr.ID)
@@ -29,8 +29,8 @@ func TestLoadAuthenticatedUser(t *testing.T) {
 
 	// Verify the midldeware returns the authenticated user
 	_ = tests.ExecuteMiddleware(ctx, mw)
-	require.NotNil(t, ctx.Get(context.AuthenticatedUserKey))
-	ctxUsr, ok := ctx.Get(context.AuthenticatedUserKey).(*ent.User)
+	require.NotNil(t, ctx.Get(reqcontext.AuthenticatedUserKey))
+	ctxUsr, ok := ctx.Get(reqcontext.AuthenticatedUserKey).(*ent.User)
 	require.True(t, ok)
 	assert.Equal(t, usr.ID, ctxUsr.ID)
 }
@@ -105,7 +105,7 @@ func TestLoadValidPasswordToken(t *testing.T) {
 	_ = tests.ExecuteMiddleware(ctx, LoadUser(c.ORM))
 	err = tests.ExecuteMiddleware(ctx, LoadValidPasswordToken(c.Auth))
 	assert.Nil(t, err)
-	ctxPt, ok := ctx.Get(context.PasswordTokenKey).(*ent.PasswordToken)
+	ctxPt, ok := ctx.Get(reqcontext.PasswordTokenKey).(*ent.PasswordToken)
 	require.True(t, ok)
 	assert.Equal(t, pt.ID, ctxPt.ID)
 }

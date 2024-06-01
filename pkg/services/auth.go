@@ -12,7 +12,7 @@ import (
 	"github.com/mikestefanello/pagoda/ent"
 	"github.com/mikestefanello/pagoda/ent/passwordtoken"
 	"github.com/mikestefanello/pagoda/ent/user"
-	"github.com/mikestefanello/pagoda/pkg/context"
+	"github.com/mikestefanello/pagoda/pkg/reqcontext"
 
 	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
@@ -170,7 +170,7 @@ func (c *AuthClient) GetValidPasswordToken(ctx echo.Context, userID, tokenID int
 			return pt, nil
 		}
 	default:
-		if !context.IsCanceledError(err) {
+		if !reqcontext.IsCanceledError(err) {
 			return nil, err
 		}
 	}
