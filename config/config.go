@@ -144,6 +144,7 @@ func GetConfig() (Config, error) {
 	viper.AddConfigPath("config")
 	viper.AddConfigPath("../config")
 	viper.AddConfigPath("../../config")
+	viper.AddConfigPath("../../../config")
 
 	// Load env variables
 	viper.SetEnvPrefix("pagoda")

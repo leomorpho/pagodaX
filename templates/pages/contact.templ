@@ -4,6 +4,7 @@ import (
 	"github.com/mikestefanello/pagoda/pkg/controller"
 	"github.com/mikestefanello/pagoda/pkg/types"
 	"github.com/mikestefanello/pagoda/templates/components"
+	"github.com/mikestefanello/pagoda/pkg/routes/routenames"
 )
 
 templ Contact(page *controller.Page) {
@@ -28,7 +29,7 @@ templ contactForm(page *controller.Page) {
 				</div>
 			</div>
 		} else {
-			<form id="contact" method="post" class="max-w-md mx-auto mt-5 mb-10" hx-post={ page.ToURL("contact.post") }>
+			<form id="contact" method="post" class="max-w-md mx-auto mt-5 mb-10" hx-post={ page.ToURL(routenames.RouteNameContactSubmit) }>
 				<div class="mb-4">
 					<label
 						for="email"

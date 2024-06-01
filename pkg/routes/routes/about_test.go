@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/mikestefanello/pagoda/pkg/routes/routenames"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -13,7 +14,7 @@ func TestAbout_Get(t *testing.T) {
 	t.Skip("Skipping TestAbout_Get for now")
 
 	doc := request(t).
-		setRoute(routeNameAbout).
+		setRoute(routenames.RouteNameAbout).
 		get().
 		assertStatusCode(http.StatusOK).
 		toDoc()

@@ -2,6 +2,7 @@ package components
 
 import (
 	"github.com/mikestefanello/pagoda/pkg/controller"
+	"github.com/mikestefanello/pagoda/pkg/routes/routenames"
 )
 
 templ Navbar(page *controller.Page) {
@@ -14,7 +15,7 @@ templ Navbar(page *controller.Page) {
 		hx-push-url="true"
 	>
 		<div class="container mx-auto px-4 py-2 flex justify-between items-center">
-			<a href={ templ.URL(page.ToURL("home")) } class="flex items-center space-x-3">
+			<a href={ templ.URL(page.ToURL(routenames.RouteNameHome)) } class="flex items-center space-x-3">
 				<img src="/files/favicon.png" class="h-8" alt="Logo"/>
 				<span class="text-2xl font-semibold">{ page.AppName }</span>
 			</a>
@@ -58,15 +59,15 @@ templ Navbar(page *controller.Page) {
 				<!-- Example Menu Items -->
 				<div class="hidden md:flex items-center space-x-4">
 					<a
-						hx-get={ page.ToURL("home") }
+						hx-get={ page.ToURL(routenames.RouteNameHome) }
 						class="text-sm hover-brightness px-3 py-2 rounded-full cursor-pointer"
 					>Home</a>
 					<a
-						hx-get={ page.ToURL("about") }
+						hx-get={ page.ToURL(routenames.RouteNameAbout) }
 						class="text-sm hover-brightness px-3 py-2 rounded-full cursor-pointer"
 					>About</a>
 					<a
-						hx-get={ page.ToURL("contact") }
+						hx-get={ page.ToURL(routenames.RouteNameContact) }
 						class="text-sm hover-brightness px-3 py-2 rounded-full cursor-pointer"
 					>Contact</a>
 				</div>
@@ -107,7 +108,7 @@ templ Navbar(page *controller.Page) {
 						<ul class="py-2">
 							<li>
 								<a
-									hx-get={ page.ToURL("dashboard") }
+									hx-get={ page.ToURL(routenames.RouteNameDashboard) }
 									class="block px-4 py-2 text-sm hover-brightness cursor-pointer"
 								>Dashboard</a>
 							</li>
@@ -119,7 +120,7 @@ templ Navbar(page *controller.Page) {
 							</li>
 							<li>
 								<a
-									href={ templ.URL(page.ToURL("logout")) }
+									href={ templ.URL(page.ToURL(routenames.RouteNameLogout)) }
 									class="block px-4 py-2 text-sm hover-brightness cursor-pointer"
 								>Sign out</a>
 							</li>
@@ -129,14 +130,14 @@ templ Navbar(page *controller.Page) {
 							<li>
 								<a
 									@click="open = false"
-									hx-get={ page.ToURL("login") }
+									hx-get={ page.ToURL(routenames.RouteNameLogin) }
 									class="block px-4 py-2 text-sm hover-brightness cursor-pointer"
 								>Login</a>
 							</li>
 							<li>
 								<a
 									@click="open = false"
-									hx-get={ page.ToURL("register") }
+									hx-get={ page.ToURL(routenames.RouteNameRegister) }
 									class="block px-4 py-2 text-sm hover-brightness cursor-pointer"
 								>Register</a>
 							</li>
@@ -188,7 +189,7 @@ templ search(page *controller.Page) {
 					</button>
 				</div>
 				<input
-					hx-get={ page.ToURL("search") }
+					hx-get={ page.ToURL(routenames.RouteNameSearch) }
 					hx-trigger="keyup changed delay:300ms"
 					hx-target="#abcdefg"
 					hx-swap="innerHTML"

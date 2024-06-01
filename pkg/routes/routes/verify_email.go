@@ -7,6 +7,7 @@ import (
 	"github.com/mikestefanello/pagoda/pkg/context"
 	"github.com/mikestefanello/pagoda/pkg/controller"
 	"github.com/mikestefanello/pagoda/pkg/msg"
+	"github.com/mikestefanello/pagoda/pkg/routes/routenames"
 )
 
 type verifyEmail struct {
@@ -21,7 +22,7 @@ func (c *verifyEmail) Get(ctx echo.Context) error {
 	email, err := c.Container.Auth.ValidateEmailVerificationToken(token)
 	if err != nil {
 		msg.Warning(ctx, "The link is either invalid or has expired.")
-		return c.Redirect(ctx, routeNameHome)
+		return c.Redirect(ctx, routenames.RouteNameHome)
 	}
 
 	// Check if it matches the authenticated user
@@ -58,5 +59,5 @@ func (c *verifyEmail) Get(ctx echo.Context) error {
 	}
 
 	msg.Success(ctx, "Your email has been successfully verified.")
-	return c.Redirect(ctx, routeNameHome)
+	return c.Redirect(ctx, routenames.RouteNameHome)
 }

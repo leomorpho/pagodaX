@@ -3,6 +3,7 @@ package routes
 import (
 	"github.com/mikestefanello/pagoda/pkg/controller"
 	"github.com/mikestefanello/pagoda/pkg/msg"
+	"github.com/mikestefanello/pagoda/pkg/routes/routenames"
 
 	"github.com/labstack/echo/v4"
 )
@@ -17,5 +18,5 @@ func (l *logout) Get(c echo.Context) error {
 	} else {
 		msg.Danger(c, "An error occurred. Please try again.")
 	}
-	return l.Redirect(c, routeNameHome)
+	return l.Redirect(c, routenames.RouteNameHome)
 }

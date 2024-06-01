@@ -9,7 +9,7 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/mikestefanello/pagoda/pkg/routes"
+	"github.com/mikestefanello/pagoda/pkg/routes/routes"
 	"github.com/mikestefanello/pagoda/pkg/services"
 	"github.com/mikestefanello/pagoda/seeder"
 )

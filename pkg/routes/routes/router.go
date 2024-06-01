@@ -9,6 +9,7 @@ import (
 	"github.com/mikestefanello/pagoda/config"
 	"github.com/mikestefanello/pagoda/pkg/controller"
 	"github.com/mikestefanello/pagoda/pkg/middleware"
+	"github.com/mikestefanello/pagoda/pkg/routes/routenames"
 	"github.com/mikestefanello/pagoda/pkg/services"
 
 	"github.com/gorilla/sessions"
@@ -17,25 +18,6 @@ import (
 	"github.com/labstack/echo/v4"
 	echomw "github.com/labstack/echo/v4/middleware"
 	slogecho "github.com/samber/slog-echo"
-)
-
-const (
-	routeNameForgotPassword       = "forgot_password"
-	routeNameForgotPasswordSubmit = "forgot_password.submit"
-	routeNameLogin                = "login"
-	routeNameLoginSubmit          = "login.submit"
-	routeNameLogout               = "logout"
-	routeNameRegister             = "register"
-	routeNameRegisterSubmit       = "register.submit"
-	routeNameResetPassword        = "reset_password"
-	routeNameResetPasswordSubmit  = "reset_password.submit"
-	routeNameVerifyEmail          = "verify_email"
-	routeNameContact              = "contact"
-	routeNameContactSubmit        = "contact.submit"
-	routeNameAbout                = "about"
-	routeNameHome                 = "home"
-	routeNameSearch               = "search"
-	routeNameDashboard            = "dashboard"
 )
 
 // BuildRouter builds the router
@@ -104,50 +86,50 @@ func BuildRouter(c *services.Container) {
 
 func navRoutes(c *services.Container, g *echo.Group, ctr controller.Controller) {
 	home := home{Controller: ctr}
-	g.GET("/", home.Get).Name = routeNameHome
+	g.GET("/", home.Get).Name = routenames.RouteNameHome
 
 	search := search{Controller: ctr}
-	g.GET("/search", search.Get).Name = routeNameSearch
+	g.GET("/search", search.Get).Name = routenames.RouteNameSearch
 
 	about := about{Controller: ctr}
-	g.GET("/about", about.Get).Name = routeNameAbout
+	g.GET("/about", about.Get).Name = routenames.RouteNameAbout
 
 	contact := contact{Controller: ctr}
-	g.GET("/contact", contact.Get).Name = routeNameContact
-	g.POST("/contact", contact.Post).Name = routeNameContactSubmit
+	g.GET("/contact", contact.Get).Name = routenames.RouteNameContact
+	g.POST("/contact", contact.Post).Name = routenames.RouteNameContactSubmit
 }
 
 func userRoutes(c *services.Container, g *echo.Group, ctr controller.Controller) {
 	auth := g.Group("/auth", middleware.RequireAuthentication())
 
 	logout := logout{Controller: ctr}
-	auth.GET("/logout", logout.Get, middleware.RequireAuthentication()).Name = routeNameLogout
+	auth.GET("/logout", logout.Get, middleware.RequireAuthentication()).Name = routenames.RouteNameLogout
 
 	dashboard := dashboard{Controller: ctr}
-	auth.GET("/dashboard", dashboard.Get, middleware.RequireAuthentication()).Name = routeNameDashboard
+	auth.GET("/dashboard", dashboard.Get, middleware.RequireAuthentication()).Name = routenames.RouteNameDashboard
 
 	verifyEmail := verifyEmail{Controller: ctr}
-	g.GET("/email/verify/:token", verifyEmail.Get).Name = routeNameVerifyEmail
+	g.GET("/email/verify/:token", verifyEmail.Get).Name = routenames.RouteNameVerifyEmail
 
 	noAuth := g.Group("/user", middleware.RequireNoAuthentication())
 	login := login{Controller: ctr}
-	noAuth.GET("/login", login.Get).Name = routeNameLogin
-	noAuth.POST("/login", login.Post).Name = routeNameLoginSubmit
+	noAuth.GET("/login", login.Get).Name = routenames.RouteNameLogin
+	noAuth.POST("/login", login.Post).Name = routenames.RouteNameLoginSubmit
 
 	register := register{Controller: ctr}
-	noAuth.GET("/register", register.Get).Name = routeNameRegister
-	noAuth.POST("/register", register.Post).Name = routeNameRegisterSubmit
+	noAuth.GET("/register", register.Get).Name = routenames.RouteNameRegister
+	noAuth.POST("/register", register.Post).Name = routenames.RouteNameRegisterSubmit
 
 	forgot := forgotPassword{Controller: ctr}
-	noAuth.GET("/password", forgot.Get).Name = routeNameForgotPassword
-	noAuth.POST("/password", forgot.Post).Name = routeNameForgotPasswordSubmit
+	noAuth.GET("/password", forgot.Get).Name = routenames.RouteNameForgotPassword
+	noAuth.POST("/password", forgot.Post).Name = routenames.RouteNameForgotPasswordSubmit
 
 	resetGroup := noAuth.Group("/password/reset",
 		middleware.LoadUser(c.ORM),
 		middleware.LoadValidPasswordToken(c.Auth),
 	)
 	reset := resetPassword{Controller: ctr}
-	resetGroup.GET("/token/:user/:password_token/:token", reset.Get).Name = routeNameResetPassword
-	resetGroup.POST("/token/:user/:password_token/:token", reset.Post).Name = routeNameResetPasswordSubmit
+	resetGroup.GET("/token/:user/:password_token/:token", reset.Get).Name = routenames.RouteNameResetPassword
+	resetGroup.POST("/token/:user/:password_token/:token", reset.Post).Name = routenames.RouteNameResetPasswordSubmit
 
 }

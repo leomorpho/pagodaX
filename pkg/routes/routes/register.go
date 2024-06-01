@@ -7,6 +7,7 @@ import (
 	"github.com/mikestefanello/pagoda/pkg/context"
 	"github.com/mikestefanello/pagoda/pkg/controller"
 	"github.com/mikestefanello/pagoda/pkg/msg"
+	"github.com/mikestefanello/pagoda/pkg/routes/routenames"
 	"github.com/mikestefanello/pagoda/pkg/types"
 	"github.com/mikestefanello/pagoda/templates"
 	"github.com/mikestefanello/pagoda/templates/layouts"
@@ -73,7 +74,7 @@ func (c *register) Post(ctx echo.Context) error {
 		ctx.Logger().Infof("user created: %s", u.Name)
 	case *ent.ConstraintError:
 		msg.Warning(ctx, "A user with this email address already exists. Please log in.")
-		return c.Redirect(ctx, routeNameLogin)
+		return c.Redirect(ctx, routenames.RouteNameLogin)
 	default:
 		return c.Fail(err, "unable to create user")
 	}
@@ -83,7 +84,7 @@ func (c *register) Post(ctx echo.Context) error {
 	if err != nil {
 		ctx.Logger().Errorf("unable to log in: %v", err)
 		msg.Info(ctx, "Your account has been created.")
-		return c.Redirect(ctx, routeNameLogin)
+		return c.Redirect(ctx, routenames.RouteNameLogin)
 	}
 
 	msg.Success(ctx, "Your account has been created. You are now logged in.")
@@ -91,7 +92,7 @@ func (c *register) Post(ctx echo.Context) error {
 	// Send the verification email
 	c.sendVerificationEmail(ctx, u)
 
-	return c.Redirect(ctx, routeNameHome)
+	return c.Redirect(ctx, routenames.RouteNameHome)
 }
 
 func (c *register) sendVerificationEmail(ctx echo.Context, usr *ent.User) {
@@ -103,7 +104,7 @@ func (c *register) sendVerificationEmail(ctx echo.Context, usr *ent.User) {
 	}
 
 	// Send the email
-	url := ctx.Echo().Reverse(routeNameVerifyEmail, token)
+	url := ctx.Echo().Reverse(routenames.RouteNameVerifyEmail, token)
 	err = c.Container.Mail.
 		Compose().
 		To(usr.Email).

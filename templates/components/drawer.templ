@@ -2,6 +2,7 @@ package components
 
 import (
 	"github.com/mikestefanello/pagoda/pkg/controller"
+	"github.com/mikestefanello/pagoda/pkg/routes/routenames"
 )
 
 templ Drawer(page *controller.Page) {
@@ -72,7 +73,7 @@ templ drawerPanel(page *controller.Page) {
 		aria-labelledby="drawer-label"
 		if page.IsAuth {
 			hx-ext="sse"
-			sse-connect={ page.ToURL("realtime") }
+			sse-connect={ page.ToURL(routenames.RouteNameRealtime) }
 		}
 		hx-target="#main-content"
 		hx-select="#main-content"
@@ -85,7 +86,7 @@ templ drawerPanel(page *controller.Page) {
 			<ul class="space-y-2 font-medium cursor-pointer">
 				<li>
 					<a
-						hx-get={ page.ToURL("home") }
+						hx-get={ page.ToURL(routenames.RouteNameHome) }
 						@click="conditionalToggle()"
 						class="flex items-center p-2 rounded-lg hover-brightness"
 						id="meet"
@@ -130,7 +131,7 @@ templ drawerPanel(page *controller.Page) {
 					</li>
 					<li>
 						<a
-							hx-get={ page.ToURL("about") }
+							hx-get={ page.ToURL(routenames.RouteNameAbout) }
 							@click="conditionalToggle()"
 							class="flex items-center p-2 rounded-lg hover-brightness"
 							id="meet"
@@ -143,7 +144,7 @@ templ drawerPanel(page *controller.Page) {
 					</li>
 					<li>
 						<a
-							hx-get={ page.ToURL("contact") }
+							hx-get={ page.ToURL(routenames.RouteNameContact) }
 							@click="conditionalToggle()"
 							class="flex items-center p-2 rounded-lg hover-brightness"
 							id="meet"
@@ -157,7 +158,7 @@ templ drawerPanel(page *controller.Page) {
 				} else {
 					<li>
 						<a
-							hx-get={ page.ToURL("logout") }
+							hx-get={ page.ToURL(routenames.RouteNameLogout) }
 							@click="conditionalToggle()"
 							class="flex items-center p-2 rounded-lg hover-brightness"
 							id="meet"
@@ -173,7 +174,7 @@ templ drawerPanel(page *controller.Page) {
 				if !page.IsAuth {
 					<li>
 						<a
-							hx-get={ page.ToURL("login") }
+							hx-get={ page.ToURL(routenames.RouteNameLogin) }
 							@click="conditionalToggle()"
 							class="flex items-center p-2 rounded-lg hover-brightness"
 							id="meet"
@@ -195,12 +196,7 @@ templ drawerPanel(page *controller.Page) {
 
 templ drawerTop(page *controller.Page) {
 	<a
-		if page.IsAuth {
-			hx-swap="outerHTML"
-			href={ templ.URL(page.ToURL("home")) }
-		} else {
-			href={ templ.URL(page.ToURL("home")) }
-		}
+		href={ templ.URL(page.ToURL(routenames.RouteNameHome)) }
 		@click="conditionalToggle()"
 		class="text-xl md:text-2xl font-semibold"
 	>

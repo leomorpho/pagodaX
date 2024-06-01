@@ -3,6 +3,7 @@ package layouts
 import (
 	"github.com/mikestefanello/pagoda/pkg/controller"
 	"github.com/mikestefanello/pagoda/templates/components"
+	"github.com/mikestefanello/pagoda/pkg/routes/routenames"
 )
 
 templ Auth(content templ.Component, page *controller.Page) {
@@ -48,15 +49,15 @@ templ Auth(content templ.Component, page *controller.Page) {
 							hx-push-url="true"
 						>
 							<a
-								hx-get={ page.ToURL("login") }
+								hx-get={ page.ToURL(routenames.RouteNameLogin) }
 								class="text-blue-500 hover:text-blue-600 cursor-pointer"
 							>Login</a> &#9676;
 							<a
-								hx-get={ page.ToURL("register") }
+								hx-get={ page.ToURL(routenames.RouteNameRegister) }
 								class="text-blue-500 hover:text-blue-600 cursor-pointer"
 							>Create an account</a> &#9676;
 							<a
-								hx-get={ page.ToURL("forgot_password") }
+								hx-get={ page.ToURL(routenames.RouteNameForgotPassword) }
 								class="text-blue-500 hover:text-blue-600 cursor-pointer"
 							>Forgot password?</a>
 						</div>
