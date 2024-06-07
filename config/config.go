@@ -114,7 +114,8 @@ type (
 	// MailConfig stores the mail configuration
 	MailConfig struct {
 		Hostname     string
-		Port         uint16
+		HttpPort     uint16
+		SmtpPort     uint16
 		User         string
 		Password     string
 		FromAddress  string

@@ -230,7 +230,7 @@ func (c *Container) initMail() {
 	if c.Config.App.Environment == config.EnvProduction {
 		mailClientImplementation = mailer.NewResendMailClient(c.Config.Mail.ResendAPIKey)
 	} else {
-		mailClientImplementation = mailer.NewSMTPMailClient("localhost", 1025)
+		mailClientImplementation = mailer.NewSMTPMailClient("localhost", int(c.Config.Mail.SmtpPort))
 	}
 	c.Mail, err = mailer.NewMailClient(c.Config, mailClientImplementation)
 	if err != nil {
