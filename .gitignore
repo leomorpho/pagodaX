@@ -2,7 +2,7 @@
 tmp/
 node_modules/
 schemaspy-output/
-.env
+# .env
 e2e_tests/node_modules
 e2e_tests/test-results
 data/mailpit.db-shm
