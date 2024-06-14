@@ -138,24 +138,29 @@ type (
 func GetConfig() (Config, error) {
 	var c Config
 
-	// Load the config file
+	// Common config loading
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath(".")
 	viper.AddConfigPath("config")
 	viper.AddConfigPath("../config")
 	viper.AddConfigPath("../../config")
-	viper.AddConfigPath("../../../config")
 
-	// Load env variables
-	viper.SetEnvPrefix("pagoda")
-	viper.AutomaticEnv()
-	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+	// Check the environment variable PAGODA_APP_ENVIRONMENT
+	env := os.Getenv("PAGODA_APP_ENVIRONMENT")
+	if env == string(EnvProduction) {
+		// Load env variables for production
+		viper.SetEnvPrefix("pagoda")
+		viper.AutomaticEnv()
+		viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+	}
 
+	// Load the config file
 	if err := viper.ReadInConfig(); err != nil {
 		return c, err
 	}
 
+	// Unmarshal the config
 	if err := viper.Unmarshal(&c); err != nil {
 		return c, err
 	}
